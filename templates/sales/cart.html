@@ -1,0 +1,224 @@
+{% extends 'sales/base.html' %}
+{% load static %}
+
+{% block title %}ตะกร้าของฉัน - Tsaiwimon{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="cart-page">
+        <h1><i class="fas fa-shopping-cart"></i> ตะกร้าของฉัน</h1>
+
+        <div class="cart-content">
+            <!-- Cart Items -->
+            <section class="cart-items-section">
+                <div id="cart-items" class="cart-items-list">
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>ตะกร้าของคุณว่างเปล่า</p>
+                        <a href="{% url 'sales:products' %}" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> ไปช้อปปิง
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cart Summary -->
+            <aside class="cart-summary">
+                <div class="summary-card">
+                    <h3>สรุปการซื้อ</h3>
+                    <div class="summary-row">
+                        <span>ราคาสินค้า:</span>
+                        <span id="subtotal">0฿</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ค่าจัดส่ง:</span>
+                        <span id="shipping">0฿</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ส่วนลด:</span>
+                        <span id="discount" style="color: #27ae60;">0฿</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>รวมทั้งสิ้น:</span>
+                        <span id="total">0฿</span>
+                    </div>
+
+                    <div class="shipping-options">
+                        <h4>ส่วนราคาจัดส่ง</h4>
+                        <label class="radio-option">
+                            <input type="radio" name="shipping" value="free" checked>
+                            <span>ส่งฟรี (3-5 วัน)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="shipping" value="express">
+                            <span>ส่งด่วน (1-2 วัน) +50฿</span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary btn-block btn-large" id="checkout-btn">
+                        <i class="fas fa-credit-card"></i> ดำเนินการชำระเงิน
+                    </button>
+                </div>
+
+                <!-- Promo Code -->
+                <div class="promo-section">
+                    <h4>โค้ดส่วนลด</h4>
+                    <div class="promo-input">
+                        <input type="text" id="promo-code" placeholder="ใส่โค้ดส่วนลด">
+                        <button class="btn btn-secondary" id="apply-promo">ใช้</button>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="recommendations">
+                    <h4>สินค้าแนะนำเพิ่มเติม</h4>
+                    <div id="recommendations-list"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load cart items from API
+    async function loadCart() {
+        try {
+            const response = await fetch('/api/v1/ecommerce/cart/current/', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            });
+            
+            if (response.status === 401) {
+                showCartEmpty();
+                return;
+            }
+
+            const cart = await response.json();
+            renderCart(cart);
+        } catch (error) {
+            console.error('Error loading cart:', error);
+            showCartEmpty();
+        }
+    }
+
+    function renderCart(cart) {
+        const container = document.getElementById('cart-items');
+        
+        if (!cart.items || cart.items.length === 0) {
+            showCartEmpty();
+            return;
+        }
+
+        container.innerHTML = '';
+        let subtotal = 0;
+
+        cart.items.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+            
+            container.innerHTML += `
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img src="${item.product_image || '/static/images/no-image.png'}" alt="${item.product_name}">
+                    </div>
+                    <div class="item-details">
+                        <h3>${item.product_name}</h3>
+                        <p class="item-sku">SKU: ${item.product_sku || 'N/A'}</p>
+                        <p class="item-price">${item.price}฿</p>
+                    </div>
+                    <div class="item-quantity">
+                        <button onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                        <input type="number" value="${item.quantity}" readonly>
+                        <button onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                    </div>
+                    <div class="item-total">
+                        <span>${itemTotal}฿</span>
+                    </div>
+                    <button class="btn-remove" onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+        });
+
+        updateSummary(subtotal);
+    }
+
+    function updateSummary(subtotal) {
+        const shipping = document.querySelector('input[name="shipping"]:checked').value === 'express' ? 50 : 0;
+        const discount = 0; // Will be updated with promo code
+        const total = subtotal + shipping - discount;
+
+        document.getElementById('subtotal').textContent = subtotal.toLocaleString('th-TH') + '฿';
+        document.getElementById('shipping').textContent = shipping.toLocaleString('th-TH') + '฿';
+        document.getElementById('discount').textContent = discount.toLocaleString('th-TH') + '฿';
+        document.getElementById('total').textContent = total.toLocaleString('th-TH') + '฿';
+    }
+
+    function showCartEmpty() {
+        document.getElementById('cart-items').innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>ตะกร้าของคุณว่างเปล่า</p>
+                <a href="{% url 'sales:products' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> ไปช้อปปิง
+                </a>
+            </div>
+        `;
+    }
+
+    async function updateQuantity(itemId, newQuantity) {
+        if (newQuantity < 1) {
+            removeItem(itemId);
+            return;
+        }
+
+        try {
+            await fetch(`/api/v1/ecommerce/cart/${itemId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            });
+            loadCart();
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+        }
+    }
+
+    async function removeItem(itemId) {
+        if (confirm('ต้องการลบสินค้ารายการนี้ใช่หรือไม่?')) {
+            try {
+                await fetch(`/api/v1/ecommerce/cart/${itemId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+                loadCart();
+            } catch (error) {
+                console.error('Error removing item:', error);
+            }
+        }
+    }
+
+    // Shipping option change
+    document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const subtotal = parseFloat(document.getElementById('subtotal').textContent);
+            updateSummary(subtotal);
+        });
+    });
+
+    // Checkout button
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+        alert('เปลี่ยนไปยังหน้าชำระเงิน (Integration needed)');
+    });
+
+    // Load cart on page load
+    loadCart();
+</script>
+{% endblock %}

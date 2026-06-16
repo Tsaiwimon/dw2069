@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tsaiwimon - แฟชั่น & เครื่องสำอาง{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/sales.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #ec4899;
+            --primary-hover: #db2777;
+            --secondary-color: #fdf2f8;
+            --text-dark: #374151;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            color: var(--text-dark);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .header { background-color: white; border-bottom: 2px solid var(--primary-color); box-shadow: 0 2px 10px rgba(236, 72, 153, 0.1); }
+        .header-top-content { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo a { color: var(--primary-color); font-size: 1.8rem; font-weight: bold; text-decoration: none; white-space: nowrap; }
+        
+        /* ปรับขนาดช่องค้นหาให้พอดีขึ้น */
+        .search-bar form { display: flex; border: 1px solid #fbcfe8; border-radius: 25px; overflow: hidden; }
+        .search-bar input { border: none; padding: 10px 15px; outline: none; width: 220px; background-color: var(--secondary-color); }
+        .search-bar button { background-color: var(--primary-color); color: white; border: none; padding: 0 15px; cursor: pointer; transition: 0.3s; }
+        .search-bar button:hover { background-color: var(--primary-hover); }
+        
+        /* เมนูด้านขวา */
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .header-actions a { color: var(--text-dark); text-decoration: none; font-size: 1rem; transition: 0.3s; display: flex; flex-direction: column; align-items: center; white-space: nowrap; }
+        .header-actions a i { font-size: 1.2rem; margin-bottom: 3px; }
+        .header-actions a:hover { color: var(--primary-color); }
+        
+        .cart-icon { position: relative; flex-direction: row !important; }
+        .cart-count { position: absolute; top: -8px; right: -10px; background: var(--primary-color); color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.75rem; font-weight: bold; }
+        
+        .nav-categories { display: flex; list-style: none; margin: 0; padding: 15px 0; justify-content: center; gap: 30px; }
+        .nav-categories a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 1.05rem; transition: 0.3s; }
+        .nav-categories a:hover { color: var(--primary-color); }
+        
+        .footer { background-color: #1f2937; color: white; padding: 50px 0 20px; margin-top: 50px; }
+        .footer-content { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 30px; }
+        .footer-section h4 { color: #fbcfe8; margin-bottom: 20px; }
+        .footer-section ul { list-style: none; padding: 0; margin: 0; }
+        .footer-section ul li { margin-bottom: 10px; }
+        .footer-section a { color: #d1d5db; text-decoration: none; }
+        .footer-section a:hover { color: var(--primary-color); }
+        .social-links a { font-size: 1.5rem; margin-right: 15px; color: white; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-content">
+                    <div class="logo">
+                        <a href="/sales/"><i class="fas fa-gem"></i> Tsaiwimon</a>
+                    </div>
+                    <div class="search-bar">
+                        <form method="get" action="#">
+                            <input type="text" name="search" placeholder="ค้นหาสินค้า..." value="{{ search|default:'' }}">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <a href="/sales/" style="color: #ec4899; font-weight: bold;">
+                            <i class="fas fa-store"></i> หน้าร้าน
+                        </a>
+                        <a href="/inventory/" style="font-weight: bold;">
+                            <i class="fas fa-boxes"></i> คลังสินค้า
+                        </a>
+                        <a href="/marketing/" style="font-weight: bold;">
+                            <i class="fas fa-bullhorn"></i> การตลาด
+                        </a>
+                        <a href="/transportation/" style="font-weight: bold;">
+                            <i class="fas fa-truck"></i> ขนส่ง
+                        </a>
+                        
+                        <div style="border-left: 2px solid #fbcfe8; padding-left: 15px; display: flex; align-items: center; gap: 15px;">
+                            <a href="#" class="cart-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span class="cart-count">0</span>
+                            </a>
+                            <a href="/admin/" style="flex-direction: row; gap: 5px;">
+                                <i class="fas fa-user-circle"></i> Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar">
+            <div class="container">
+                <ul class="nav-categories">
+                    <li><a href="/sales/"><i class="fas fa-home"></i> หน้าแรก</a></li>
+                    <li><a href="#"><i class="fas fa-th-large"></i> สินค้าทั้งหมด</a></li>
+                    <li><a href="#"><i class="fas fa-spa"></i> สกินแคร์</a></li>
+                    <li><a href="#"><i class="fas fa-magic"></i> เครื่องสำอาง</a></li>
+                    <li><a href="#"><i class="fas fa-tshirt"></i> เสื้อผ้าแฟชั่น</a></li>
+                    <li><a href="#" style="color: #ec4899;"><i class="fas fa-bolt"></i> Flash Sale</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>เกี่ยวกับเรา</h4>
+                    <p>Tsaiwimon อาณาจักรความงามและแฟชั่นออนไลน์ คัดสรรสินค้าคุณภาพเพื่อคุณ</p>
+                </div>
+                <div class="footer-section">
+                    <h4>ช่วยเหลือ</h4>
+                    <ul>
+                        <li><a href="#">ติดต่อเรา</a></li>
+                        <li><a href="#">วิธีสั่งซื้อและชำระเงิน</a></li>
+                        <li><a href="#">นโยบายความเป็นส่วนตัว</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>ติดตามเรา</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% extends 'sales/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Tsaiwimon{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb" style="margin: 15px 0; font-size: 13px;">
+        <a href="{% url 'sales:home' %}">หน้าแรก</a> > 
+        <a href="{% url 'sales:products' %}">สินค้าทั้งหมด</a> > 
+        <span>{{ product.name }}</span>
+    </div>
+
+    <div class="product-detail-page" style="background: white; padding: 20px; border-radius: 6px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image" style="aspect-ratio: 1; background-color: #f5f5f5; border-radius: 6px; overflow: hidden; margin-bottom: 15px;">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: contain; padding: 20px;">
+                </div>
+                <div class="thumbnail-images" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <div style="aspect-ratio: 1; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; border: 2px solid #ee4d2d;">
+                        <img src="{{ product.image }}" alt="Thumbnail 1" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="product-details">
+                <h1 style="font-size: 24px; margin-bottom: 12px;">{{ product.name }}</h1>
+                
+                <div class="rating-section" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <span style="color: #ff9e1b; font-size: 18px;">★★★★★</span>
+                        <span style="color: #999; font-size: 13px;">({{ product.review_count }} รีวิว)</span>
+                        <span style="color: #999; font-size: 13px;">| ขายแล้ว {{ product.sold_count }}</span>
+                    </div>
+                </div>
+
+                <div class="price-section" style="background: #fafafa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                        <span style="font-size: 32px; color: #ee4d2d; font-weight: bold;">{{ product.sale_price|default:product.price }}฿</span>
+                        {% if product.discount_percent %}
+                        <span style="font-size: 18px; color: #999; text-decoration: line-through;">{{ product.price }}฿</span>
+                        <span style="background-color: #ee4d2d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 13px; font-weight: bold;">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info-section" style="margin-bottom: 20px;">
+                    <div style="display: grid; gap: 12px; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">SKU</span>
+                            <span>{{ product.sku }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">หมวดหมู่</span>
+                            <span>{{ product.category.name }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">สต็อก</span>
+                            <span style="color: {% if product.stock > 10 %}#27ae60{% elif product.stock > 0 %}#f39c12{% else %}#e74c3c{% endif %};">
+                                {% if product.stock > 0 %}{{ product.stock }} ชิ้น{% else %}สินค้าหมด{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="quantity-section" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">จำนวน</label>
+                    <div style="display: flex; align-items: center; gap: 10px; width: fit-content;">
+                        <button onclick="decreaseQuantity()" style="width: 36px; height: 36px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}" style="width: 60px; height: 36px; text-align: center; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button onclick="increaseQuantity()" style="width: 36px; height: 36px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px;">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <button class="btn btn-secondary btn-block btn-large" onclick="addToWishlist()">
+                        <i class="fas fa-heart"></i> เพิ่มในรายการโปรด
+                    </button>
+                    <button class="btn btn-primary btn-block btn-large" onclick="addProductToCart({{ product.id }})">
+                        <i class="fas fa-shopping-cart"></i> เพิ่มลงตะกร้า
+                    </button>
+                </div>
+
+                <!-- Buy Now Button -->
+                <button class="btn btn-primary btn-block" style="padding: 14px 20px; font-size: 16px; margin-bottom: 20px;">
+                    <i class="fas fa-credit-card"></i> ซื้อเลย
+                </button>
+
+                <!-- Seller Info -->
+                <div class="seller-info" style="background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        <i class="fas fa-store" style="font-size: 24px; color: #ee4d2d;"></i>
+                        <div>
+                            <h3 style="font-size: 14px; margin: 0;">Tsaiwimon Store</h3>
+                            <p style="font-size: 12px; color: #999; margin: 0;">ร้านค้าอย่างเป็นทางการ</p>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; color: #666;">
+                        <div>⭐ 4.8 (500+ รีวิว)</div>
+                        <div>📦 ผ่านการตรวจสอบสินค้า</div>
+                    </div>
+                </div>
+
+                <!-- Shipping Info -->
+                <div class="shipping-info" style="background: #f9f9f9; padding: 15px; border-radius: 6px;">
+                    <div style="font-size: 13px; line-height: 1.8;">
+                        <div><i class="fas fa-truck"></i> ส่งฟรี สำหรับการซื้อเกิน 100 บาท</div>
+                        <div><i class="fas fa-clock"></i> ได้รับภายใน 3-5 วัน</div>
+                        <div><i class="fas fa-undo"></i> คืนสินค้าได้ 7 วัน</div>
+                        <div><i class="fas fa-shield-alt"></i> ซื้อสินค้าอย่างปลอดภัย</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+            <h2 style="font-size: 18px; margin-bottom: 15px;">รายละเอียดสินค้า</h2>
+            <div style="background: white; padding: 20px; border-radius: 6px; line-height: 1.8;">
+                {{ product.description|safe }}
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        {% if related_products %}
+        <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+            <h2 style="font-size: 18px; margin-bottom: 15px;">สินค้าที่เกี่ยวข้อง</h2>
+            <div class="products-grid">
+                {% for related in related_products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="{{ related.image }}" alt="{{ related.name }}">
+                    </div>
+                    <div class="product-info">
+                        <h3><a href="{% url 'sales:product-detail' related.id %}">{{ related.name }}</a></h3>
+                        <p class="product-category">{{ related.category.name }}</p>
+                        <div class="product-rating">
+                            <span class="stars">★★★★★</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">{{ related.sale_price|default:related.price }}฿</span>
+                        </div>
+                        <button class="btn btn-primary btn-block btn-add-cart" data-product-id="{{ related.id }}">
+                            <i class="fas fa-shopping-cart"></i> เพิ่มลงตะกร้า
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = input.getAttribute('max');
+    if (parseInt(input.value) < parseInt(max)) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function addProductToCart(productId) {
+    const quantity = document.getElementById('quantity').value;
+    const cartCount = parseInt(localStorage.getItem('cartCount') || '0');
+    localStorage.setItem('cartCount', cartCount + parseInt(quantity));
+    
+    // Update cart count
+    document.querySelector('.cart-count').textContent = localStorage.getItem('cartCount');
+    
+    // Show notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background-color: #27ae60;
+        color: white;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+    `;
+    notification.textContent = 'เพิ่มสินค้าลงตะกร้าแล้ว! (' + quantity + ' ชิ้น)';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function addToWishlist() {
+    alert('เพิ่มในรายการโปรด (Integration needed)');
+}
+</script>
+{% endblock %}

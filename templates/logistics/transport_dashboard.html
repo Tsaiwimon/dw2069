@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Tsaiwimon - ระบบจัดส่งสินค้า{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 30px; margin-bottom: 50px;">
+    <h2 style="color: #3b82f6; border-bottom: 2px solid #bfdbfe; padding-bottom: 10px;">🚚 ระบบจัดการพัสดุและขนส่ง (Logistics)</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;">
+        <div style="background: white; padding: 15px; border-left: 5px solid #f59e0b; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="color: #6b7280; margin: 0; font-size: 0.95rem;">รอแพ็คสินค้า</p>
+            <h3 style="margin: 5px 0 0; font-size: 1.8rem; color: #d97706;">24 <span style="font-size: 1rem; color: #9ca3af;">ออเดอร์</span></h3>
+        </div>
+        <div style="background: white; padding: 15px; border-left: 5px solid #3b82f6; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="color: #6b7280; margin: 0; font-size: 0.95rem;">พร้อมจัดส่ง (รอรับ)</p>
+            <h3 style="margin: 5px 0 0; font-size: 1.8rem; color: #2563eb;">18 <span style="font-size: 1rem; color: #9ca3af;">ออเดอร์</span></h3>
+        </div>
+        <div style="background: white; padding: 15px; border-left: 5px solid #10b981; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="color: #6b7280; margin: 0; font-size: 0.95rem;">กำลังจัดส่ง</p>
+            <h3 style="margin: 5px 0 0; font-size: 1.8rem; color: #059669;">45 <span style="font-size: 1rem; color: #9ca3af;">ออเดอร์</span></h3>
+        </div>
+        <div style="background: white; padding: 15px; border-left: 5px solid #ef4444; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="color: #6b7280; margin: 0; font-size: 0.95rem;">พัสดุตีกลับ/มีปัญหา</p>
+            <h3 style="margin: 5px 0 0; font-size: 1.8rem; color: #dc2626;">2 <span style="font-size: 1rem; color: #9ca3af;">ออเดอร์</span></h3>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; color: #1e3a8a;">รายการที่ต้องจัดส่งวันนี้</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 1rem;">
+            <tr style="background: #eff6ff; text-align: left;">
+                <th style="padding: 12px; border-bottom: 2px solid #bfdbfe; color: #1e40af;">เลขที่ออเดอร์</th>
+                <th style="padding: 12px; border-bottom: 2px solid #bfdbfe; color: #1e40af;">ลูกค้า</th>
+                <th style="padding: 12px; border-bottom: 2px solid #bfdbfe; color: #1e40af;">บริษัทขนส่ง</th>
+                <th style="padding: 12px; border-bottom: 2px solid #bfdbfe; color: #1e40af;">Tracking No.</th>
+                <th style="padding: 12px; border-bottom: 2px solid #bfdbfe; color: #1e40af; text-align: center;">จัดการ</th>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">#ORD-20260601</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">คุณ สมหญิง รักสวย</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;"><span style="background: #fef08a; color: #854d0e; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">Flash Express</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #9ca3af;">รอสร้างเลขพัสดุ</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;"><button style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">พิมพ์ใบปะหน้า</button></td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">#ORD-20260602</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">คุณ สุดสวย ใจดี</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;"><span style="background: #fed7aa; color: #c2410c; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">Kerry Express</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #9ca3af;">รอสร้างเลขพัสดุ</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;"><button style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">พิมพ์ใบปะหน้า</button></td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

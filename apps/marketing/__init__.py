@@ -1,0 +1,3 @@
+"""
+Marketing System application package.
+"""

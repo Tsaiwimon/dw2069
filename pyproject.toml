@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tsaiwimon"
+version = "1.0.0"
+description = "Tsaiwimon E-Commerce Platform with Warehouse, Marketing, and Logistics Management"
+authors = [
+    {name = "Development Team", email = "dev@tsaiwimon.local"}
+]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "django==4.2.14",
+    "djangorestframework==3.14.0",
+    "drf-spectacular==0.29.0",
+    "django-cors-headers==4.3.1",
+    "django-environ==0.11.2",
+    "django-filter==24.1",
+    "django-extensions==4.1",
+    "python-dateutil==2.8.2",
+    "Pillow==10.0.1",
+    "requests==2.32.3",
+    "celery==5.3.4",
+    "redis==5.0.1",
+    "psycopg2-binary==2.9.9",
+    "python-decouple==3.8",
+    "gunicorn==21.2.0",
+    "whitenoise==6.6.0",
+    "daphne==4.2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==7.4.3",
+    "pytest-django==4.7.0",
+    "pytest-cov==4.1.0",
+    "black==23.12.1",
+    "flake8==6.1.0",
+    "isort==5.13.2",
+    "django-debug-toolbar==4.2.0",
+    "factory-boy==3.3.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_gitignore = true
+known_django = "django"
+known_first_party = "apps"
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tsaiwimon.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "--cov=apps --cov-report=html --cov-report=term-missing"
+
+[tool.setuptools]
+packages = ["tsaiwimon", "apps"]

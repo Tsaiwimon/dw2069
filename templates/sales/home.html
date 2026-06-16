@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tsaiwimon - หน้าแรก{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-banner {
+        background: linear-gradient(to right, #f9a8d4, #ec4899);
+        color: white;
+        text-align: center;
+        padding: 60px 20px;
+        border-radius: 15px;
+        margin: 20px auto 40px auto;
+        max-width: 1160px;
+        box-shadow: 0 10px 25px rgba(236, 72, 153, 0.2);
+    }
+    .hero-banner h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+    .hero-banner p { font-size: 1.2rem; margin-bottom: 30px; }
+    .btn-shop {
+        background: white; color: #ec4899; padding: 12px 35px; text-decoration: none; 
+        border-radius: 30px; font-weight: bold; font-size: 1.1rem; display: inline-block; 
+        transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .btn-shop:hover { background: #fdf2f8; transform: translateY(-2px); }
+    
+    .category-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 50px;
+    }
+    
+    /* สไตล์สำหรับกล่องรูปภาพแบบสมจริง */
+    .category-card {
+        position: relative; border-radius: 15px; overflow: hidden; display: block; 
+        height: 280px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: 0.3s;
+    }
+    .category-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+    .category-card img {
+        width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease-in-out;
+    }
+    .category-card:hover img { transform: scale(1.1); }
+    .category-overlay {
+        position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+        display: flex; align-items: flex-end; justify-content: center; padding-bottom: 25px; transition: 0.3s;
+    }
+    .category-card:hover .category-overlay { background: linear-gradient(to top, rgba(236,72,153,0.7) 0%, rgba(0,0,0,0.1) 100%); }
+    .category-overlay h3 {
+        color: white; font-size: 1.6rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); margin: 0; font-weight: bold;
+    }
+    
+    .section-title {
+        border-left: 5px solid #ec4899; padding-left: 15px; margin-bottom: 25px;
+    }
+    .section-title h2 { color: #374151; margin: 0; font-size: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="hero-banner">
+    <h1>ลดราคาสูงสุด 70%</h1>
+    <p>เครื่องสำอาง สกินแคร์ และแฟชั่นแบรนด์ดัง เติมสินค้าใหม่ทุกวัน</p>
+    <a href="{% url 'sales:products' %}" class="btn-shop">ช้อปเลย</a>
+</div>
+
+<!-- Category Section -->
+<div class="container">
+    <div class="section-title">
+        <h2>หมวดหมู่สินค้าความงาม & แฟชั่น</h2>
+    </div>
+
+    <div class="category-grid">
+        <!-- สกินแคร์ -->
+        <a href="#" class="category-card">
+            <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=800" alt="สกินแคร์">
+            <div class="category-overlay"><h3>สกินแคร์</h3></div>
+        </a>
+
+        <!-- เครื่องสำอาง -->
+        <a href="#" class="category-card">
+            <img src="https://images.pexels.com/photos/2536009/pexels-photo-2536009.jpeg?auto=compress&cs=tinysrgb&w=800" alt="เครื่องสำอาง">
+            <div class="category-overlay"><h3>เครื่องสำอาง</h3></div>
+        </a>
+
+        <!-- เสื้อผ้าแฟชั่น -->
+        <a href="#" class="category-card">
+            <img src="https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&w=800" alt="เสื้อผ้าแฟชั่น">
+            <div class="category-overlay"><h3>เสื้อผ้าแฟชั่น</h3></div>
+        </a>
+
+        <!-- น้ำหอม -->
+        <a href="#" class="category-card">
+            <img src="https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=800" alt="น้ำหอม">
+            <div class="category-overlay"><h3>น้ำหอม</h3></div>
+        </a>
+    </div>
+</div>
+{% endblock %}
