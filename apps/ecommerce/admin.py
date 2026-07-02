@@ -3,9 +3,20 @@ Admin configuration for E-Commerce app.
 """
 from django.contrib import admin
 from .models import (
-    Category, Product, ProductImage, Cart, CartItem, Order, 
+    Category, Product, ProductVariant, ProductImage, Cart, CartItem, Order, 
     OrderItem, Review, Payment
 )
+
+#เพิ่ม Inline เพื่อให้จัดการข้อมูลตัวเลือกสินค้าและรูปภาพในหน้าสินค้าหลักได้ทันที
+class ProductVariantInline(admin.TabularInline):
+    model = ProductVariant
+    extra = 1
+    fields = ('sku', 'color', 'size', 'stock', 'min_stock', 'price_override')
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
 
 
 @admin.register(Category)
@@ -29,22 +40,25 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'sku', 'category', 'price', 'stock', 'rating', 'is_active']
+    # 📌 ปรับปรุงลากฟิลด์ ราคาเริ่มต้น และ คะแนน มาโชว์แทนสต็อก/SKU เดิม
+    list_display = ['name', 'category', 'base_price', 'discount_percent', 'rating', 'is_active']
     list_filter = ['category', 'is_active', 'created_at']
-    search_fields = ['name', 'sku']
+    search_fields = ['name']
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['rating', 'review_count', 'created_at', 'updated_at']
+    
+    # ดึง Inline ของราการย่อย (สี/ไซส์) และรูปภาพเพิ่มเติมมาแสดง
+    inlines = [ProductVariantInline, ProductImageInline]
+    
     fieldsets = (
         ('ข้อมูลสินค้า', {
-            'fields': ('sku', 'name', 'slug', 'description', 'category')
+            'fields': ('name', 'slug', 'description', 'category') # เอา sku ออกเพราะย้ายไปอยู่ใน Variant
         }),
-        ('ราคา', {
-            'fields': ('price', 'cost', 'discount_percent')
+        ('ราคาเริ่มต้น', {
+            'fields': ('base_price', 'base_cost', 'discount_percent') # เปลี่ยนเป็น base_price และ base_cost
         }),
-        ('สต็อก', {
-            'fields': ('stock', 'min_stock')
-        }),
-        ('รูปภาพ', {
+        # หมายเหตุ: นำหัวข้อ "สต็อก" ออกจากสินค้าหลัก เนื่องจากระบบย้ายสต็อกไปคำนวณแยกตาม สี/ไซส์ ใน Variant แล้ว
+        ('รูปภาพหลัก', {
             'fields': ('image',)
         }),
         ('คะแนน', {
@@ -54,6 +68,14 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('is_active', 'created_at', 'updated_at')
         }),
     )
+
+
+# 📌 ลงทะเบียนเมนูจัดการตัวเลือกสินค้า (สี/ไซส์/สต็อก) เผื่อต้องการเช็คสต็อกแยกชิ้นแบบละเอียด
+@admin.register(ProductVariant)
+class ProductVariantAdmin(admin.ModelAdmin):
+    list_display = ['sku', 'product', 'color', 'size', 'stock', 'min_stock', 'price_override']
+    list_filter = ['product__category', 'stock']
+    search_fields = ['sku', 'product__name', 'color', 'size']
 
 
 @admin.register(ProductImage)
@@ -73,9 +95,10 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['product', 'cart', 'quantity', 'price', 'created_at']
+    # 📌 เปลี่ยนจาก product เป็น variant ให้ตรงตามโมเดลตัวใหม่
+    list_display = ['variant', 'cart', 'quantity', 'price', 'created_at']
     list_filter = ['created_at']
-    search_fields = ['product__name', 'cart__user__username']
+    search_fields = ['variant__product__name', 'variant__sku', 'cart__user__username']
     readonly_fields = ['created_at', 'updated_at']
 
 
@@ -83,7 +106,7 @@ class CartItemAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_number', 'user', 'status', 'total', 'created_at']
     list_filter = ['status', 'created_at']
-    search_fields = ['order_number', 'user__username']
+    search_fields = ['order_number', 'user__username', 'shipping_name']
     readonly_fields = ['order_number', 'created_at', 'updated_at']
     fieldsets = (
         ('ข้อมูลคำสั่ง', {
@@ -103,9 +126,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['order', 'product_name', 'quantity', 'price', 'created_at']
+    # 📌 เพิ่มส่องดู variant ในรายการออเดอร์
+    list_display = ['order', 'product_name', 'variant', 'quantity', 'price', 'created_at']
     list_filter = ['order__created_at', 'created_at']
-    search_fields = ['product_name', 'order__order_number']
+    search_fields = ['product_name', 'order__order_number', 'variant__sku']
     readonly_fields = ['created_at', 'updated_at']
 
 

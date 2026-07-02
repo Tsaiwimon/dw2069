@@ -1,19 +1,19 @@
 """
-Management command to populate products with mock data
+Management command to populate products with mock data supporting Variants.
 """
 from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
-from apps.ecommerce.models import Category, Product
+from apps.ecommerce.models import Category, Product, ProductVariant
 import requests
-from io import BytesIO
+import random
 
 
 class Command(BaseCommand):
-    help = 'Populate database with sample products and categories'
+    help = 'Populate database with sample products and variants'
 
     def handle(self, *args, **options):
-        # Create categories
+        # 1. Create categories
         categories_data = [
             {'name': 'ความงาม', 'description': 'สินค้าความงามและแต่งหน้า'},
             {'name': 'เสื้อผ้า', 'description': 'เสื้อผ้าและแฟชั่น'},
@@ -38,47 +38,47 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f"→ Category already exists: {cat.name}")
 
-        # Sample products data
+        # 2. Sample products data
         products_data = [
             # ความงาม
             {
                 'category': 'ความงาม',
                 'name': 'แป้งพัฟผ่อง Natural Glow',
                 'description': 'แป้งพัฟแบบกดสไตล์เกาหลี ให้ความเนียนนุ่มขึ้นต่อเนื่อง',
-                'price': 399.00,
-                'stock': 50,
+                'base_price': 399.00,
+                'variants': [{'color': 'No.01 ผิวขาว', 'size': 'มาตรฐาน'}, {'color': 'No.02 ผิวสองสี', 'size': 'มาตรฐาน'}],
                 'image_url': 'https://picsum.photos/400/400?random=1'
             },
             {
                 'category': 'ความงาม',
                 'name': 'ลิปสติก Velvet Matte',
                 'description': 'ลิปสติกแมตท์สีชุ่มชื่น ติดทนนาน',
-                'price': 299.00,
-                'stock': 80,
+                'base_price': 299.00,
+                'variants': [{'color': '01 Red Ruby', 'size': '3.5g'}, {'color': '02 Pink Rose', 'size': '3.5g'}, {'color': '03 Peach Nude', 'size': '3.5g'}],
                 'image_url': 'https://picsum.photos/400/400?random=2'
             },
             {
                 'category': 'ความงาม',
                 'name': 'ไอชาโดว์พาเลต 12 สี',
                 'description': 'ไอชาโดว์หลากสีให้เลือกสรร สีชัดเจนติดทน',
-                'price': 549.00,
-                'stock': 60,
+                'base_price': 549.00,
+                'variants': [{'color': 'โทนส้มอิฐ', 'size': '12 เฉด'}, {'color': 'โทนชมพูตุ่น', 'size': '12 เฉด'}],
                 'image_url': 'https://picsum.photos/400/400?random=3'
             },
             {
                 'category': 'ความงาม',
                 'name': 'แมสคาร่า Black Volume',
                 'description': 'แมสคาร่าปรับปริมาณ ให้ขนตาหนาพริ้ว',
-                'price': 349.00,
-                'stock': 75,
+                'base_price': 349.00,
+                'variants': [{'color': 'สีดำสนิท', 'size': 'มาตรฐาน'}],
                 'image_url': 'https://picsum.photos/400/400?random=4'
             },
             {
                 'category': 'ความงาม',
                 'name': 'บีบีครีม SPF 30',
                 'description': 'บีบีครีมบำรุงผิว มีเนื้อที่ปกปิดเบาบาง',
-                'price': 449.00,
-                'stock': 100,
+                'base_price': 449.00,
+                'variants': [{'color': 'ผิวขาวชมพู', 'size': '30ml'}, {'color': 'ผิวขาวเหลือง', 'size': '30ml'}],
                 'image_url': 'https://picsum.photos/400/400?random=5'
             },
             # เสื้อผ้า
@@ -86,40 +86,40 @@ class Command(BaseCommand):
                 'category': 'เสื้อผ้า',
                 'name': 'เสื้อยืดคอกลม สีพื้น',
                 'description': 'เสื้อยืดผ้านวม สวมใส่สบาย ใส่ได้ทุกวัน',
-                'price': 199.00,
-                'stock': 150,
+                'base_price': 199.00,
+                'variants': [{'color': 'สีขาว', 'size': 'M'}, {'color': 'สีขาว', 'size': 'L'}, {'color': 'สีดำ', 'size': 'M'}, {'color': 'สีดำ', 'size': 'L'}],
                 'image_url': 'https://picsum.photos/400/400?random=6'
             },
             {
                 'category': 'เสื้อผ้า',
                 'name': 'กระโปรงผ้ายืด มิดี่',
                 'description': 'กระโปรงยาวกลาง ผ้ายืดใส่สะบาย สีเป็นทรงตัว',
-                'price': 349.00,
-                'stock': 85,
+                'base_price': 349.00,
+                'variants': [{'color': 'สีครีม', 'size': 'Free Size'}, {'color': 'สีน้ำตาล', 'size': 'Free Size'}],
                 'image_url': 'https://picsum.photos/400/400?random=7'
             },
             {
                 'category': 'เสื้อผ้า',
                 'name': 'เสื้อเชิ้ตคอปก Oversized',
                 'description': 'เสื้อเชิ้ตแบบโอเวอร์ไซส์ สไตล์ลำลองแต่ดูดี',
-                'price': 599.00,
-                'stock': 60,
+                'base_price': 599.00,
+                'variants': [{'color': 'สีฟ้าอ่อน', 'size': 'Oversize'}, {'color': 'สีขาว', 'size': 'Oversize'}],
                 'image_url': 'https://picsum.photos/400/400?random=8'
             },
             {
                 'category': 'เสื้อผ้า',
                 'name': 'กางเกงยีนส์ สกินนี่ ฟ้าอ่อน',
                 'description': 'กางเกงยีนส์สกินนี่ทรงสวย แมตช์ได้หลายแบบ',
-                'price': 699.00,
-                'stock': 70,
+                'base_price': 699.00,
+                'variants': [{'color': 'ยีนส์ฟอกฟ้า', 'size': 'S'}, {'color': 'ยีนส์ฟอกฟ้า', 'size': 'M'}, {'color': 'ยีนส์ฟอกฟ้า', 'size': 'L'}],
                 'image_url': 'https://picsum.photos/400/400?random=9'
             },
             {
                 'category': 'เสื้อผ้า',
                 'name': 'เดรสชีฟองออกงาน',
                 'description': 'เดรสชีฟองพิมพ์ลาย ใส่ออกงานได้ดี',
-                'price': 1299.00,
-                'stock': 40,
+                'base_price': 1299.00,
+                'variants': [{'color': 'ลายดอกชมพู', 'size': 'M'}, {'color': 'ลายดอกชมพู', 'size': 'L'}],
                 'image_url': 'https://picsum.photos/400/400?random=10'
             },
             # เครื่องสำอาง
@@ -127,107 +127,56 @@ class Command(BaseCommand):
                 'category': 'เครื่องสำอาง',
                 'name': 'ครีมบำรุงผิววัย Night Repair',
                 'description': 'ครีมบำรุงยามค่ำ สำหรับเซลล์ผิวยามค่ำ',
-                'price': 799.00,
-                'stock': 45,
+                'base_price': 799.00,
+                'variants': [{'color': 'สูตรกลางคืน', 'size': '50g'}],
                 'image_url': 'https://picsum.photos/400/400?random=11'
             },
             {
                 'category': 'เครื่องสำอาง',
                 'name': 'เจลอาบน้ำ Moisturizing',
                 'description': 'เจลอาบน้ำบำรุง ให้ผิวชุ่มชื่นไม่แห้ง',
-                'price': 299.00,
-                'stock': 120,
+                'base_price': 299.00,
+                'variants': [{'color': 'กลิ่น Honey & Milk', 'size': '500ml'}],
                 'image_url': 'https://picsum.photos/400/400?random=12'
-            },
-            {
-                'category': 'เครื่องสำอาง',
-                'name': 'โลชั่นบำรุงผิวกาย Body Lotion',
-                'description': 'โลชั่นบำรุงผิวกาย กลิ่นหอม ซึมเร็ว',
-                'price': 349.00,
-                'stock': 90,
-                'image_url': 'https://picsum.photos/400/400?random=13'
-            },
-            {
-                'category': 'เครื่องสำอาง',
-                'name': 'เสรัจชำระล้างหน้า Facial Wash',
-                'description': 'เสรัจล้างหน้าสำหรับผิวธรรมชาติ ล้างสะอาดไม่แห้ง',
-                'price': 199.00,
-                'stock': 150,
-                'image_url': 'https://picsum.photos/400/400?random=14'
-            },
-            {
-                'category': 'เครื่องสำอาง',
-                'name': 'ซีรั่มบำรุงสกินแคร์ Vitamin C',
-                'description': 'ซีรั่มเข้มข้น วิตามิน C สำหรับยกกระชับผิว',
-                'price': 899.00,
-                'stock': 55,
-                'image_url': 'https://picsum.photos/400/400?random=15'
-            },
-            # อุปกรณ์ในบ้าน
-            {
-                'category': 'อุปกรณ์ในบ้าน',
-                'name': 'หมอนผ้าฝ้ายลายลูกไม้',
-                'description': 'หมอนขนาด 40x60 ผ้าฝ้ายเนื้อหนา ลายสวย',
-                'price': 449.00,
-                'stock': 30,
-                'image_url': 'https://picsum.photos/400/400?random=16'
-            },
-            {
-                'category': 'อุปกรณ์ในบ้าน',
-                'name': 'ผ้าม่านกั้นแสงม่านบดเบา',
-                'description': 'ผ้าม่านหนา 200x200 ซม บดเบาแสง สีเป็นทรงตัว',
-                'price': 599.00,
-                'stock': 25,
-                'image_url': 'https://picsum.photos/400/400?random=17'
-            },
-            {
-                'category': 'อุปกรณ์ในบ้าน',
-                'name': 'โคมไฟอ่านหนังสือ LED',
-                'description': 'โคมไฟ LED สว่างไม่วาวตา ปรับได้ 3 ระดับ',
-                'price': 799.00,
-                'stock': 40,
-                'image_url': 'https://picsum.photos/400/400?random=18'
-            },
-            # อิเล็กทรอนิกส์
-            {
-                'category': 'อิเล็กทรอนิกส์',
-                'name': 'แท่นชาร์จโทรศัพท์ Fast Charging',
-                'description': 'แท่นชาร์จสมาร์ท ชาร์จเร็ว รองรับ 10 W',
-                'price': 899.00,
-                'stock': 100,
-                'image_url': 'https://picsum.photos/400/400?random=19'
-            },
-            {
-                'category': 'อิเล็กทรอนิกส์',
-                'name': 'ลำโพงบลูทูธ Wireless',
-                'description': 'ลำโพงบลูทูธเสียงดี เบส หนักแน่น เสียงใส',
-                'price': 1299.00,
-                'stock': 50,
-                'image_url': 'https://picsum.photos/400/400?random=20'
             },
         ]
 
-        # Create products
+        # 3. Create products and their variants
         for product_data in products_data:
             category = categories[product_data['category']]
             product_slug = slugify(product_data['name'].lower(), allow_unicode=True)
             
+            # บันทึกลงตาราง Product หลัก
             product, created = Product.objects.get_or_create(
                 name=product_data['name'],
                 defaults={
                     'slug': product_slug,
                     'category': category,
                     'description': product_data['description'],
-                    'price': product_data['price'],
-                    'stock': product_data['stock'],
-                    'sku': f"SKU-{product_data['name'][:10].upper().replace(' ', '-')}",
+                    'base_price': product_data['base_price'],
+                    'base_cost': round(product_data['base_price'] * 0.5, 2), # สมมติว่าต้นทุน 50%
                 }
             )
             
             if created:
-                self.stdout.write(f"✓ Created: {product.name} (฿{product.price})")
+                self.stdout.write(f"✓ Created Base Product: {product.name}")
                 
-                # Download and save image
+                # ลูปสร้างตัวย่อย (Variants) พ่วงเข้ากับตัวหลัก
+                for idx, v_info in enumerate(product_data['variants']):
+                    sku_name = f"SKU-{product.id}-{idx+1:02d}-{v_info['size'].upper()[:2]}"
+                    ProductVariant.objects.get_or_create(
+                        product=product,
+                        sku=sku_name,
+                        color=v_info['color'],
+                        size=v_info['size'],
+                        defaults={
+                            'stock': random.randint(30, 100),
+                            'min_stock': 5
+                        }
+                    )
+                    self.stdout.write(f"   → Variant Created: SKU: {sku_name} ({v_info['color']} / {v_info['size']})")
+
+                # ดาวน์โหลดรูปภาพ
                 try:
                     response = requests.get(product_data['image_url'], timeout=5)
                     if response.status_code == 200:
@@ -237,12 +186,12 @@ class Command(BaseCommand):
                             ContentFile(response.content),
                             save=True
                         )
-                        self.stdout.write(f"  → Image saved for {product.name}")
+                        self.stdout.write(f"   → Image saved for {product.name}")
                 except Exception as e:
-                    self.stdout.write(f"  ⚠ Could not download image: {str(e)}")
+                    self.stdout.write(f"   ⚠ Could not download image: {str(e)}")
             else:
-                self.stdout.write(f"→ Already exists: {product.name}")
+                self.stdout.write(f"→ Base Product already exists: {product.name}")
 
         self.stdout.write(self.style.SUCCESS(
-            '\n✓ Successfully populated database with products!'
+            '\n✓ Successfully populated database with products and variants!'
         ))

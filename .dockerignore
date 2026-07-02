@@ -1,0 +1,19 @@
+# Ignore python cache
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local virtual environment
+.venv/
+venv/
+env/
+
+# Ignore local databases & secrets
+*.sqlite3
+.env
+
+# Ignore git and IDE config
+.git
+.gitignore
+.vscode/
