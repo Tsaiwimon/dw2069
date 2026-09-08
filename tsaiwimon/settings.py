@@ -194,3 +194,10 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+
+# ClickHouse analytics connection
+CLICKHOUSE_HOST = config('CLICKHOUSE_HOST', default='localhost')
+CLICKHOUSE_PORT = config('CLICKHOUSE_PORT', default=8123, cast=int)
+CLICKHOUSE_USER = config('CLICKHOUSE_USER', default='default')
+CLICKHOUSE_PASSWORD = config('CLICKHOUSE_PASSWORD', default='')
+CLICKHOUSE_DB = config('CLICKHOUSE_DB', default='default')

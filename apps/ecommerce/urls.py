@@ -3,6 +3,8 @@ URLs for E-Commerce system.
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
+from apps.logistics import admin
 from .views import (
     CategoryViewSet, ProductViewSet, CartViewSet, OrderViewSet, 
     ReviewViewSet, PaymentViewSet
@@ -20,4 +22,5 @@ router.register(r'cart', CartViewSet, basename='cart')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('sales/', include('apps.ecommerce.sales_urls')),
 ]

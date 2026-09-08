@@ -30,6 +30,7 @@ urlpatterns = [
     path('inventory/', include('apps.warehouse.inventory_urls', namespace='inventory')),
     path('marketing/', include('apps.marketing.marketing_urls', namespace='marketing_web')),
     path('transportation/', include('apps.logistics.transport_urls', namespace='transportation')),
+    path('dashboard/', include('apps.core.dashboard_urls', namespace='dashboard')),
     
     # ==========================================
     # 📄 API Documentation (สำหรับนักพัฒนาดูสเปค API)

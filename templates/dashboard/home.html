@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}แดชบอร์ดสด | Tsaiwimon{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block content %}
+<main class="dashboard-shell">
+    <header class="dashboard-heading">
+        <div>
+            <p class="eyebrow">TSaiwimon / OPERATIONS</p>
+            <h1>ภาพรวมธุรกิจแบบสด</h1>
+            <p class="subtitle">ยอดขาย สต็อก และการจัดส่งในช่วง 24 ชั่วโมงล่าสุด</p>
+        </div>
+        <div class="live-status" id="connection-status"><span></span> กำลังเชื่อมต่อ</div>
+    </header>
+
+    <section class="metric-grid" aria-label="ตัวชี้วัดหลัก">
+        <article class="metric-card metric-sales"><span class="metric-label">รายได้ 24 ชั่วโมง</span><strong id="revenue">฿0</strong><small id="orders">0 ออเดอร์</small></article>
+        <article class="metric-card metric-orders"><span class="metric-label">ออเดอร์ที่ชำระแล้ว</span><strong id="paid-orders">0</strong><small>รายการสำเร็จ</small></article>
+        <article class="metric-card metric-stock"><span class="metric-label">สินค้าคงเหลือ</span><strong id="stock-units">0</strong><small id="low-stock">0 รายการใกล้หมด</small></article>
+        <article class="metric-card metric-shipping"><span class="metric-label">กำลังจัดส่ง</span><strong id="in-transit">0</strong><small id="shipping-summary">ส่งแล้ว 0 / รอดำเนินการ 0</small></article>
+    </section>
+
+    <section class="dashboard-grid">
+        <article class="panel trend-panel">
+            <div class="panel-heading"><div><p class="eyebrow">LIVE SALES</p><h2>จังหวะยอดขายรายชั่วโมง</h2></div><span class="updated" id="updated-at">รอข้อมูล</span></div>
+            <div class="chart" id="sales-chart"><div class="empty-state">กำลังโหลดข้อมูล...</div></div>
+        </article>
+        <article class="panel top-panel"><div class="panel-heading"><div><p class="eyebrow">TOP PRODUCTS</p><h2>สินค้าขายดี</h2></div></div><div id="top-products" class="product-list"><div class="empty-state">กำลังโหลดข้อมูล...</div></div></article>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/dashboard.js' %}"></script>{% endblock %}
