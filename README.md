@@ -1,33 +1,27 @@
-# dw2069
-ระบบขายหน้าเว็บ, ระบบคลังสินค้า, ระบบการตลาด และระบบขนส่ง
+# dw2069 - Live Operations Dashboard
 
-# dw2069 - Enterprise Business Management System
-
-ระบบบริหารจัดการธุรกิจแบบครบวงจร พัฒนาด้วย **Django** สำหรับจัดการระบบขายหน้าร้าน คลังสินค้า การตลาด และโลจิสติกส์
+ระบบแดชบอร์ดแสดงผลภาพรวมธุรกิจแบบเรียลไทม์ พัฒนาด้วย **Django** สำหรับติดตามยอดขาย สต็อกสินค้า และสถานะการจัดส่งในรอบ 24 ชั่วโมง
 
 ---
 
-## 🚀 ฟีเจอร์หลัก (Key Features)
-* **ระบบขายหน้าร้าน (Sales & E-Commerce):** จัดการคำสั่งซื้อ ตะกร้าสินค้า และรายการชำระเงิน
-* **ระบบคลังสินค้า (Warehouse & Inventory):** ติดตั้งระบบตรวจสอบสต็อกสินค้าและใบรับสินค้า
-* **ระบบการตลาด (Marketing):** จัดการแคมเปญและข้อมูลโปรโมชัน
-* **ระบบขนส่ง (Logistics & Shipping):** ติดตามสถานะการจัดส่งและการกระจายสินค้า
-* **แดชบอร์ดสด (Live Operations Dashboard):** แสดงผลภาพรวมธุรกิจแบบเรียลไทม์ทั้งยอดขายและสถานะออร์เดอร์
+## 📊 ฟีเจอร์ของแดชบอร์ด (Dashboard Features)
+* **Real-time Metrics:** แสดงผลตัวเลขสำคัญ 4 ช่องหลัก ได้แก่ รายได้รวม 24 ชั่วโมง, ออร์เดอร์ที่ชำระแล้ว, สินค้าคงเหลือ, และสถานะการจัดส่ง
+* **Live Sales Chart:** กราฟแสดงจังหวะยอดขายรายชั่วโมงแบบอัปเดตต่อเนื่อง
+* **Top Products:** ตารางจัดอันดับสินค้าขายดีพร้อมรหัส SKU และยอดขายล่าสุด
+* **Auto-refresh UI:** หน้าจอถูกออกแบบมาให้จำลองและอัปเดตความเคลื่อนไหวของข้อมูลธุรกิจแบบสด ๆ
 
 ---
 
-## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
-* **Backend:** Python, Django, Django REST Framework (DRF)
-* **Database:** PostgreSQL
-* **Containerization:** Docker & Docker Compose
-* **Frontend/UI:** HTML5, Tailwind CSS, JavaScript
+## 🛠️ เทคโนโลยีในส่วนแดชบอร์ด (Tech Stack)
+* **Backend:** Python, Django 4.2.14, Django REST Framework
+* **Database:** PostgreSQL / SQLite
+* **Frontend:** HTML5, Tailwind CSS, JavaScript (Interactive UI)
 
 ---
 
-## ⚙️ วิธีการติดตั้งและรันโปรเจค (Getting Started)
+## 🚀 วิธีการเข้าใช้งานแดชบอร์ด (Getting Started)
 
-1. **โคลนโปรเจคและสร้าง Virtual Environment:**
+1. **เปิดโปรเจคผ่าน VS Code และเลือก Interpreter `.venv`**
+2. **รันเซิร์ฟเวอร์พัฒนา:**
    ```bash
-   git clone [https://github.com/Tsaiwimon/dw2069.git](https://github.com/Tsaiwimon/dw2069.git)
-   cd dw2069
-   python -m venv .venv
+   python manage.py runserver
