@@ -18,7 +18,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv(
 
 # Application definition
 INSTALLED_APPS = [
-    # 'daphne',  <--- คอมเมนต์ปิดไว้ เพราะไม่ได้ใช้ WebSockets
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,7 +71,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tsaiwimon.wsgi.application'
-# ASGI_APPLICATION = 'tsaiwimon.asgi.application'  <--- ปิด ASGI ไว้
+ASGI_APPLICATION = 'tsaiwimon.asgi.application'
 
 # Database
 DATABASES = {

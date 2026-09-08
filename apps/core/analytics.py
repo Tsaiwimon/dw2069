@@ -25,6 +25,8 @@ def _client():
         username=_setting('CLICKHOUSE_USER', 'default'),
         password=_setting('CLICKHOUSE_PASSWORD', ''),
         database=_setting('CLICKHOUSE_DB', 'default'),
+        connect_timeout=2,
+        send_receive_timeout=2,
     )
 
 

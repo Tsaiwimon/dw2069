@@ -22,4 +22,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Run migrations and start server
-CMD ["gunicorn", "tsaiwimon.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "tsaiwimon.asgi:application"]

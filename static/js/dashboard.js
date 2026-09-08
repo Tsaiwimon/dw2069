@@ -32,9 +32,15 @@
         renderChart(data.sales.trend); renderProducts(data.top_products);
     }
 
-    async function refresh() {
-        try { const response = await fetch(apiUrl, { cache: 'no-store' }); if (!response.ok) throw new Error('Dashboard request failed'); render(await response.json()); }
-        catch (error) { $('connection-status').innerHTML = '<span></span> เชื่อมต่อไม่ได้'; $('connection-status').classList.add('is-error'); }
-    }
-    refresh(); setInterval(refresh, 10000);
+    const stream = new EventSource('/dashboard/stream/');
+    stream.onopen = () => $('connection-status').classList.remove('is-error');
+    stream.onmessage = (event) => {
+        render(JSON.parse(event.data));
+        $('connection-status').innerHTML = '<span></span> เชื่อมต่อแบบสด';
+    };
+    stream.onerror = () => {
+        stream.close();
+        $('connection-status').innerHTML = '<span></span> แสดงข้อมูลล่าสุด';
+        $('connection-status').classList.add('is-error');
+    };
 }());

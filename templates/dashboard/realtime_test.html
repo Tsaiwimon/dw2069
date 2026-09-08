@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}เพิ่มข้อมูลทดสอบสด | Tsaiwimon{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"><link rel="stylesheet" href="{% static 'css/realtime_test.css' %}">{% endblock %}
+
+{% block content %}
+<main class="test-shell">
+    <header class="test-heading">
+        <div><p class="eyebrow">REALTIME TEST CONSOLE</p><h1>เพิ่มข้อมูลเพื่อทดสอบ</h1><p class="subtitle">หน้านี้สร้างออเดอร์ตัวอย่างลงฐานข้อมูลโดยไม่ต้องเข้า Admin</p></div>
+        <a class="dashboard-link" href="{% url 'dashboard:home' %}">เปิด Dashboard สด <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </header>
+
+    <section class="test-layout">
+        <form id="order-form" class="test-form">
+            {% csrf_token %}
+            <div class="form-title"><span class="form-icon"><i class="fas fa-plus"></i></span><div><p class="eyebrow">NEW EVENT</p><h2>สร้างออเดอร์ทดสอบ</h2></div></div>
+            <label>ชื่อสินค้า<input name="product_name" value="สินค้าทดสอบ" maxlength="255" required></label>
+            <div class="form-row"><label>ยอดรวม<input name="total" type="number" min="1" step="0.01" value="1000" required></label><label>จำนวน<input name="quantity" type="number" min="1" step="1" value="1" required></label></div>
+            <label>ราคาต่อชิ้น<input name="price" type="number" min="1" step="0.01" value="1000" required></label>
+            <label>สถานะ<select name="status"><option value="pos_completed">ขายสำเร็จ</option><option value="confirmed">ยืนยันแล้ว</option><option value="preparing">กำลังเตรียมสินค้า</option></select></label>
+            <button class="create-button" type="submit"><i class="fas fa-bolt"></i> บันทึกข้อมูลทันที</button>
+            <p id="form-message" class="form-message" role="status"></p>
+        </form>
+        <section class="recent-panel"><div class="recent-heading"><div><p class="eyebrow">RECENT EVENTS</p><h2>ออเดอร์ล่าสุด</h2></div><span class="refresh-note"><span></span>อัปเดตแบบสด</span></div><div id="recent-orders" class="recent-orders"><p class="empty-state">กำลังโหลด...</p></div></section>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/realtime_test.js' %}"></script>{% endblock %}
